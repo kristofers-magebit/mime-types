@@ -14,12 +14,14 @@
 
 var db = require('mime-db')
 var extname = require('path').extname
+var isUrl = require('is-url')
 
 /**
  * Module variables.
  * @private
  */
 
+var MATCH_URL_EXT_REGEXP = /.+\.([a-zA-Z]+)\?/
 var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/
 var TEXT_TYPE_REGEXP = /^text\//i
 
@@ -128,16 +130,27 @@ function extension (type) {
  * @param {string} path
  * @return {boolean|string}
  */
-
+//
 function lookup (path) {
   if (!path || typeof path !== 'string') {
     return false
   }
 
-  // get the extension ("ext" or ".ext" or full path)
-  var extension = extname('x.' + path)
-    .toLowerCase()
-    .substr(1)
+  var extension;
+  var match;
+
+  if (isUrl(path)) {
+    match = path.match(MATCH_URL_EXT_REGEXP)
+  }
+
+  if (match) {
+    extension = match[1]
+  } else {
+    // get the extension ("ext" or ".ext" or full path)
+    extension = extname('x.' + path)
+      .toLowerCase()
+      .substr(1)
+  }
 
   if (!extension) {
     return false
