@@ -145,6 +145,7 @@ function lookup (path) {
 
   if (match) {
     extension = match[1]
+      .toLowerCase()
   } else {
     // get the extension ("ext" or ".ext" or full path)
     extension = extname('x.' + path)
